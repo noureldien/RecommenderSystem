@@ -5,6 +5,8 @@
 
 clc;
 
+addpath(genpath('./MF/'));
+
 % load the data
 load('Data\t_train.mat');
 load('Data\t_test.mat');
