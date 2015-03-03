@@ -16,8 +16,8 @@ load('Data\t_truth.mat');
 
 % the matrix is M x N
 % m is the users, n is the jokes
-M   = 1000;
-N   = 100;
+M   = 600;
+N   = 20;
 
 % just train your model
 % on a small portion of the t_test
@@ -30,7 +30,7 @@ t_truth = t_truth(:,1:N);
 
 % Let “Omega” be the indeces of the observed entries
 % i.e the indeces of user ratings ratings that does not equal to 99
-omega = find(t_test == 99);
+omega = find(t_test ~= 99);
 
 % the observed entries themselves, not their indeces
 % i.e these are the user ratings
@@ -52,9 +52,6 @@ t_rand(t_rand == 99) = 0;
 % get the errors
 [confusionEstm, rmseEstm, ameEstm] = calcError(t_truth, t_test, t_estm, 99);
 [confusionRand, rmseRand, ameRand] = calcError(t_truth, t_test, t_rand, 99);
-
-%disp(strcat('Estimate Error: ', num2str(ameEstm)));
-%disp(strcat('Randon-walk Error: ', num2str(ameRand)));
 
 % plot results
 plotResult(confusionEstm, rmseEstm, ameEstm, confusionRand, rmseRand, ameRand);

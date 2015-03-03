@@ -65,9 +65,6 @@ t_rand(t_rand == -11) = 0;
 [confusionEstm, rmseEstm, ameEstm] = calcError(t_truth, t_test, t_estm, -11);
 [confusionRand, rmseRand, ameRand] = calcError(t_truth, t_test, t_rand, -11);
 
-%disp(strcat('Estimate Error: ', num2str(ameEstm)));
-%disp(strcat('Randon-walk Error: ', num2str(ameRand)));
-
 % plot results
 plotResult(confusionEstm, rmseEstm, ameEstm, confusionRand, rmseRand, ameRand);
 
