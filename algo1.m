@@ -6,78 +6,70 @@
 clc;
 
 addpath(genpath('./MF/'));
+addpath(genpath('./Shared/'));
 
 % load the data
 load('Data\t_train.mat');
 load('Data\t_test.mat');
 load('Data\t_truth.mat');
 
+% the matrix is M x N
+% m is the users, n is the jokes
+M   = 500;
+N   = 10;
+
+% size of the latent features
+K = 20;
+
+% parameters of the alogirthm
+%alpha : the learning rate
+%beta  : the regularization parameter
+steps = 1000;
+alpha = 0.001;
+beta = 0.2;
+
 % just train your model
 % on a small portion of the t_test
-R = t_test;
-R = R(1:50,:);
-R = R(:,1:6);
+t_test = t_test(1:M,:);
+t_test = t_test(:,1:N);
 
-% truth 
-T = t_truth;
-T = T(1:50,:);
-T = T(:,1:6);
+% truth
+t_truth = t_truth(1:M,:);
+t_truth = t_truth(:,1:N);
 
 % because this model is built to work
 % on ranges from 1 to N (0 is missing data)
 % and the training data we have is a bit diffirent
 % (ranges of ratings form -10 to 10, where 99 is a missing data)
 % so, these 2 lines is to fix that
-R(R == 99) = -11;
-R = R + 11;
-
-% size of the rating matrix
-[N, M] = size(R);
-
-% size of the latent features
-K = 50;
-
-% parameters of the alogirthm
-%alpha : the learning rate
-%beta  : the regularization parameter
-steps=1000;
-alpha=0.01;
-beta=0.2;
+t_test(t_test == 99) = -11;
+t_test = t_test + 11;
 
 % factorize the rating matrix
-P = rand(N,K);
-Q = rand(M,K);
+P = rand(M,K);
+Q = rand(N,K);
 
-[nP, nQ] = naiveMF(R, P, Q, K, steps, alpha, beta);
-nR = nP*nQ';
+[P, Q] = naiveMF(t_test, P, Q, K, steps, alpha, beta);
+t_estm = P*Q';
 
 % shift back the data
-nR = nR - 11;
-R = R - 11;
+t_estm = t_estm - 11;
+t_test = t_test - 11;
 
-% check against truth
-%nR vs. t_truth
-confusionTrain = abs(nR - T)';
-confusionTruth = abs(R - T)';
-rmseTrain = reshape(confusionTrain,[size(confusionTrain,1)*size(confusionTrain,2),1]);
-rmseTrain = sqrt(mean((rmseTrain).^2));
-rmseTruth = reshape(confusionTruth,[size(confusionTruth,1)*size(confusionTruth,2),1]);
-rmseTruth = sqrt(mean((rmseTruth).^2));
+% random walk, if I just placed zero
+% (i.e the average number), what would happen
+t_rand = t_test;
+t_rand(t_rand == -11) = 0;
 
-disp(strcat('Final Error: ', num2str(rmseTrain)));
+% get the errors
+[confusionEstm, rmseEstm, ameEstm] = calcError(t_truth, t_test, t_estm, -11);
+[confusionRand, rmseRand, ameRand] = calcError(t_truth, t_test, t_rand, -11);
 
-% plot the result
-figure(1); clf;
-subplot(2,1,1);
-imshow(confusionTrain, 'InitialMagnification', 1000);
-title(strcat('RMSE: ', num2str(rmseTrain)));
-colormap(jet);
-colorbar;
-subplot(2,1,2);
-imshow(confusionTruth, 'InitialMagnification', 1000);
-title(strcat('RMSE: ', num2str(rmseTruth)));
-colormap(jet);
-colorbar;
+%disp(strcat('Estimate Error: ', num2str(ameEstm)));
+%disp(strcat('Randon-walk Error: ', num2str(ameRand)));
+
+% plot results
+plotResult(confusionEstm, rmseEstm, ameEstm, confusionRand, rmseRand, ameRand);
 
 
 

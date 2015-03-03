@@ -7,68 +7,57 @@ clc;
 
 addpath(genpath('./cvx/'));
 addpath(genpath('./TFOCS/'));
+addpath(genpath('./Shared/'));
 
-rng('default');    % for reproducible results
-N   = 20;       % the matrix is M x N
-M   = 100;      % m is the users, n is the jokes
-r   = 2;        % the rank of the matrix
-df  = M*N*r - r^2;  % degrees of freedom of a N x N rank r matrix
-nSamples    = 0.4*df; % number of observed entries
+% load the data
+load('Data\t_train.mat');
+load('Data\t_test.mat');
+load('Data\t_truth.mat');
 
-% For this demo, we will use a matrix with integer entries
-% because it will make displaying the matrix easier.
-iMax    = 5;
-X       = randi(iMax,M,r)*randi(iMax,r,N); % Our target matrix
+% the matrix is M x N
+% m is the users, n is the jokes
+M   = 1000;
+N   = 100;
 
-%Now suppose we only see a few entries of X. Let “Omega” be the set of observed entries
-rPerm   = randperm(M*N); % use "randsample" if you have the stats toolbox
-omega   = sort( rPerm(1:nSamples) );
+% just train your model
+% on a small portion of the t_test
+t_test = t_test(1:M,:);
+t_test = t_test(:,1:N);
 
-%Print out the observed matrix in a nice format.
-% The “NaN” entries represent unobserved values.
-% The goal of this demo is to find out what those values are!
+% Our target matrix, i.e our ground-truth
+t_truth = t_truth(1:M,:);
+t_truth = t_truth(:,1:N);
 
-Y = nan(M,N);
-Y(omega) = X(omega);
+% Let “Omega” be the indeces of the observed entries
+% i.e the indeces of user ratings ratings that does not equal to 99
+omega = find(t_test == 99);
 
-observations = X(omega);    % the observed entries
-mu           = .001;        % smoothing parameter
+% the observed entries themselves, not their indeces
+% i.e these are the user ratings
+observations = t_truth(omega);
+
+% smoothing parameter
+mu = 0.0001;        
 
 % The solver runs in seconds
 tic
-Xk = solver_sNuclearBP( {M,N,omega}, observations, mu );
+t_estm = solver_sNuclearBP( {M,N,omega}, observations, mu );
 toc
 
-% replace NaN with zero
-Y_ = Y;
-Y_(find(isnan(Y))) = 0;
+% random walk, if I just placed zero
+% (i.e the average number), what would happen
+t_rand = t_test;
+t_rand(t_rand == 99) = 0;
 
-t_estimated = Xk;
-t_truth = X;
-t_test = Y_;
-% check against truth
-confusionTrain = abs(t_estimated - t_truth)';
-confusionTruth = abs(t_test - t_truth)';
-rmseTrain = reshape(confusionTrain,[size(confusionTrain,1)*size(confusionTrain,2),1]);
-rmseTrain = sqrt(mean((rmseTrain).^2));
-rmseTruth = reshape(confusionTruth,[size(confusionTruth,1)*size(confusionTruth,2),1]);
-rmseTruth = sqrt(mean((rmseTruth).^2));
+% get the errors
+[confusionEstm, rmseEstm, ameEstm] = calcError(t_truth, t_test, t_estm, 99);
+[confusionRand, rmseRand, ameRand] = calcError(t_truth, t_test, t_rand, 99);
 
-disp(strcat('Final Error: ', num2str(rmseTrain)));
+%disp(strcat('Estimate Error: ', num2str(ameEstm)));
+%disp(strcat('Randon-walk Error: ', num2str(ameRand)));
 
-% plot the result
-figure(2); clf;
-subplot(2,1,1);
-imshow(confusionTrain, 'InitialMagnification', 1000);
-title(strcat('RMSE: ', num2str(rmseTrain)));
-colormap(jet);
-colorbar;
-subplot(2,1,2);
-imshow(confusionTruth, 'InitialMagnification', 1000);
-title(strcat('RMSE: ', num2str(rmseTruth)));
-colormap(jet);
-colorbar;
-
+% plot results
+plotResult(confusionEstm, rmseEstm, ameEstm, confusionRand, rmseRand, ameRand);
 
 
 
