@@ -18,39 +18,41 @@ addpath(genpath('./Shared/'));
 load('Data\t_train.mat');
 load('Data\t_test.mat');
 load('Data\t_truth.mat');
+load('Data\fourk.mat');
+load('Data\fourk55.mat');
+load('Data\train.mat');
+load('Data\test.mat');
 
 % the matrix is M x N
 % m is the users, n is the jokes
-M   = 3000;
+% all the analysis will be done on small space (2D)
+% then later on, it will be scaled up to the full space (100D)
+M   = 6000;
 N   = 100;
 [M,N] = size(t_truth);
 
-% just train your model on a small portion
-t_test = t_test(1:M,:);
-t_test = t_test(:,1:N);
-
-% truth
-t_truth = t_truth(1:M,:);
-t_truth = t_truth(:,1:N);
+% take small portion of the data
+t_train = t_train(1:M,1:N);
+t_test = t_test(1:M,1:N);
+t_truth = t_truth(1:M,1:N);
 
 % replace missing by 0
 % t_test(t_test == 99) = 0;
+
+% this is an attempt to do dimentionality reduction
+% on the t_test we have, these are the steps
+% 1. Find the least discremenant feature and throw it ()
 
 % mainly, use the complete data to do dimentionality reduction
 % the complete data is the t_truth, as it doesn't have any missing value
 
 % getting the variances of the features
-% variances = var(t_truth);
+%variances = var(t_truth);
 
-figure(1); clf;
-hold on;
-grid on;
-box on;
-plot(variances);
-title('Using complete data, variances for all features');
+% getting PCA
+%[pca_coeff, pca_score, pca_latent, pca_tsquare] = princomp(t_truth);
 
-% loop on all the features and get their
-
+% get the correlation matrix of the
 for i=82:82
     
     % 36, 50, 71
@@ -59,42 +61,25 @@ for i=82:82
     % some operations on the feature
     % to make it more able to be visalized
     feature = t_truth(:,featureN);
-    feature_sorted = sort(feature);
-    % round the ratings to the nearest int values
-    % so we can draw a histogram
-    feature_approx = double(int16(feature));
+    
     % get counts and bin of histogram
-    [feature_histo_c,feature_histo_b] = hist(feature_approx);   
+    %[feature_histo_c,feature_histo_b] = hist(feature_approx);   
     
     figure(2); clf;
-    hold on;
-    box on;
-    grid on;
-    subplot(1,3,1);
-    plot(feature, '.');
-    title('Using complete data: sorted ratings for feature 36');
-    
     hold on;
     box on;
     grid on;
     subplot(1,3,2);
     barh(feature_histo_b,feature_histo_c);
     title(strcat('Using complete data: histogram for feature ', num2str(featureN)));
-    
-    hold on;
-    box on;
-    grid on;
-    subplot(1,3,3);
-    boxplot(feature);
-    title(strcat('Using complete data: mean ratings for feature ', num2str(featureN)));
-    
-    % from initial screening, some feature have steady ratings (i.e. low variance)
-    % like feature 50, ratings from 2:6
-    % others have high-variance ratings
-    % like feature 71, ratings from from 5:-6
-    
+        
     pause(0.001);
 end
+
+
+
+
+
 
 
 
