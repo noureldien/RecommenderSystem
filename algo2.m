@@ -1,4 +1,4 @@
-% this is the first technique to use
+% this is the second technique to use
 % it is simply SVD free Low rank matrix recovery
 % In this formulation, nuclear norm is replaced by equivalent Ky-Fan norm
 % This eliminates need for complex singular value decomposition at every

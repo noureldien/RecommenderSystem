@@ -1,4 +1,4 @@
-function [U,Sigma,V,numiter] = SVT(n,Omega,b,delta,maxiter,tol)
+function [U,Sigma,V,numiter] = SVT(m,n,Omega,b,delta,maxiter,tol)
 % 
 % Finds the minimum of  tau ||X||_* + .5 || X ||_F^2 
 %           subject to  P_Omega(X) == P_Omega(M)
@@ -7,14 +7,15 @@ function [U,Sigma,V,numiter] = SVT(n,Omega,b,delta,maxiter,tol)
 % Usage:  [U,S,V,numiter] = SVT(n,Omega,b,delta,maxiter,opts)
 %
 % Inputs:
-% n - size of the matrix X assumed n by n
+% n - width of the matrix X (m*n)
+% m - height of the matrix X (m*n)
 % Omega - set of observed entries
 % b - data vector of the form M(Omega)
 % delta - step size 
 % maxiter - maximum number of iterations
 %
 % Outputs: matrix X stored in SVD format X = U*diag(S)*V'
-% U - nxr left singular vectors  
+% U - mxr left singular vectors  
 % S - rx1 singular values
 % V - nxr right singular vectors 
 % numiter - number of iterations to achieve convergence
@@ -30,11 +31,11 @@ function [U,Sigma,V,numiter] = SVT(n,Omega,b,delta,maxiter,tol)
 % Email: emmanuel@acm.caltech.edu
 % Created: October 2008
 
-m = length(Omega);  [temp,indx] = sort(Omega); 
+l = length(Omega);  [temp,indx] = sort(Omega); 
 tau = 5*n;  incre = 5; 
 
-[i, j] = ind2sub([n,n], Omega);
-ProjM = sparse(i,j,b,n,n,m);
+[i, j] = ind2sub([m,n], Omega);
+ProjM = sparse(i,j,b,m,n,l);
 
 normProjM = normest(ProjM);
 k0 = ceil(tau/(delta*normProjM));
@@ -42,7 +43,7 @@ k0 = ceil(tau/(delta*normProjM));
 normb = norm(b);
 
 y = k0*delta*b;
-Y = sparse(i,j,y,n,n,m);
+Y = sparse(i,j,y,m,n,l);
 r = 0;
 
 fprintf('\nIteration:   ');

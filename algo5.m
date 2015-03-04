@@ -16,7 +16,7 @@ load('Data\t_truth.mat');
 
 % the matrix is M x N
 % m is the users, n is the jokes
-M   = 600;
+M   = 1000;
 N   = 20;
 
 % just train your model
@@ -37,12 +37,16 @@ omega = find(t_test ~= 99);
 observations = t_truth(omega);
 
 % smoothing parameter
-mu = 0.0001;        
+mu = 0.00001;
+epsilon = 0.01;
 
 % The solver runs in seconds
 tic
 t_estm = solver_sNuclearBP( {M,N,omega}, observations, mu );
 toc
+
+% or we could use relaxted parameter for faster solution
+%t_estm = solver_sNuclearBPDN( {M,N,omega}, observations, epsilon, mu );
 
 % random walk, if I just placed zero
 % (i.e the average number), what would happen
