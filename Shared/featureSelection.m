@@ -1,18 +1,25 @@
-function [ clusters ] = featureSelection( data, errorThreshold, varThreshold )
+function [ clusters ] = featureSelection( data, errorThreshold, varThreshold, missings )
 
 % group features into clusters, each cluster has a group
 % of similar features, where the rmse between any pair of features
 % in one cluster is less than or equal to the given threshold
-
+%
 % input:
 %         data      : M*N, where M observations, N features
 %    errorThreshold : over this threshold, the 2 features are not considered correlated
 %      varThreshold : a feature with variance over it is considered noisy and not picked up in the cluster
-
+%
 % output:
 %          clusters : list of clustered features
 
+
+K = length(missings);
 [M,N] = size(data);
+
+% replace missings with zero
+for j=1:K
+    data(data == missings(j)) = 0;
+end
 
 % get matrix that represent the pair-wise rmse
 % between the features

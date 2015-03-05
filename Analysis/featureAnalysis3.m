@@ -70,7 +70,7 @@ t_truth_ = dataReduction(t_truth, clusters);
 
 % now see the error for prediction before/after featureReduction
 % without reduction: rmse=4.0782
-% with reduction   : rmse=
+% with reduction   : rmse=4.3782
 data = t_test_;
 
 % the matrix is M x N
