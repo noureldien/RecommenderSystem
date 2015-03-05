@@ -1,5 +1,5 @@
-% doing some analysis on the histograms of the ratings
-% for each feature
+% doing some analysis on the features using 
+% the histograms of the ratings for each feature
 
 clc;
 

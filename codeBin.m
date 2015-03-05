@@ -14,3 +14,24 @@
 % %plot(dataVariances(fourk, [55 99]), 'b', 'LineWidth', 3);
 % %plot(dataVariances(fourk55, [55 99]), 'r', 'LineWidth', 1);
 % return;
+
+%% this is how to do permutation for data
+%x = 1:20;
+%N = length(x); 
+%perm_idx = randperm(N);
+%x_perm = zeros(1, N);
+%
+% permute
+%for i=1:N
+%    x_perm(i) = x(perm_idx(i));
+%end
+%
+% return back original result
+%x_recvd = zeros(1, N);
+%for i=1:N
+%    x_recvd(perm_idx(i)) = x_perm(i);
+%end
+%
+%disp(x);
+%disp(x_perm);
+%disp(x_recvd);
