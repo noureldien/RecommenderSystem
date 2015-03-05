@@ -12,8 +12,9 @@ function [ confusion, rmse, ame ] = calcError(t_truth, t_train, t_estm, missings
 % and was predicting, we're not going to calculate the error
 % for all the ratings
 K = length(missings);
+idx = [];
 for j=1:K
-    idx = [idx find(t_train == missings(i))];
+    idx = [idx; find(t_train == missings(j))];
 end
 
 rmse = abs(t_truth(idx) - t_estm(idx))';

@@ -62,11 +62,16 @@ alpha = 5.7;
 beta = 33;
 
 %clusters = featureSelection(t_truth, alpha, beta);
-%t_test_ = dataReduction(t_test, clusters);
-%t_truth_ = dataReduction(t_truth, clusters);
+t_test_ = t_test;
+t_test_(t_test_ == 99) = 0;
+t_test_ = dataReduction(t_test_, clusters);
+t_test_(t_test_ == 0) = 99;
+t_truth_ = dataReduction(t_truth, clusters);
 
 % now see the error for prediction before/after featureReduction
-data = t_test;
+% without reduction: rmse=4.0782
+% with reduction   : rmse=
+data = t_test_;
 
 % the matrix is M x N
 % m is the users, n is the jokes
@@ -88,7 +93,7 @@ tic
 estm = solver_sNuclearBP( {M,N,omega}, observations, mu );
 toc
 
-[ confusion, rmse, ame ] = calcError(t_truth, data, estm, [55 99]);
+[ confusion, rmse, ame ] = calcError(t_truth_, data, estm, [55 99]);
 
 
 
