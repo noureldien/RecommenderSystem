@@ -1,5 +1,3 @@
-clc;
-
 % motivation
 % features are redundant / irrelevant, that's why
 % we try to find the best features and neglect the others
