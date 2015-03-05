@@ -9,8 +9,8 @@
 clc;
 
 % include directories
-addpath(genpath('./Data/'));
-addpath(genpath('./Shared/'));
+addpath(genpath('..\Data\'));
+addpath(genpath('..\Shared\'));
 
 % load the data
 load('Data\t_train.mat');

@@ -47,50 +47,20 @@
 % and put instead of it the mean values for each feature
 
 % include directories
-addpath(genpath('.\Data\'));
-addpath(genpath('.\Shared\'));
+addpath(genpath('..\Data\'));
+addpath(genpath('..\Shared\'));
 
 % load('..\Data\fourk.mat');
 % load('..\Data\fourk55.mat');
 % load('..\Data\train.mat');
 % load('..\Data\test.mat');
-load('Data\t_train.mat');
-load('Data\t_test.mat');
-load('Data\t_truth.mat');
 
-alpha = 5.7;
-beta = 33;
+% load('..\Data\train.mat');
+% load('..\Data\test.mat');
 
-%clusters = featureSelection(t_truth, alpha, beta);
-%t_test_ = dataReduction(t_test, clusters);
-%t_truth_ = dataReduction(t_truth, clusters);
-
-% now see the error for prediction before/after featureReduction
-data = t_test;
-
-% the matrix is M x N
-% m is the users, n is the jokes
-[M,N] = size(data);
-
-% Let “Omega” be the indeces of the observed entries
-% i.e the indeces of user ratings ratings that does not equal to 99
-omega = find(data ~= 99 & data ~= 55);
-
-% the observed entries themselves, not their indeces
-% i.e these are the user ratings
-observations = data(omega);
-
-% smoothing parameter
-mu = 0.0001;
-
-% The solver runs in seconds
-tic
-estm = solver_sNuclearBP( {M,N,omega}, observations, mu );
-toc
-
-[ confusion, rmse, ame ] = calcError(t_truth, data, estm, [55 99]);
-
-
+errorThreshold = 5.7;
+varThreshold = 33;
+newData = clus
 
 
 
