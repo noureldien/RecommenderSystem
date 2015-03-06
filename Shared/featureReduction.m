@@ -1,4 +1,4 @@
-function [ reducedData ] = dataReduction( data, clusters, missings )
+function [ reducedData ] = featureReduction( data, clusters, missings )
 
 % reduce the features in the given data upon the given
 % clusters of features

@@ -6,47 +6,60 @@ load('Data\t_truth.mat');
 load('Data\t_test.mat');
 load('Data\t_train.mat');
 
-[M,N] = size(t_truth);
+[~,N] = size(t_train);
 
 % do feature reduction/selection
 varianceThreshold = 33;
 errorThreshold = 5.6;
-clusters = featureSelection(t_truth, errorThreshold, varianceThreshold, [99]);
-t_truthReducted = dataReduction(t_truth, clusters, []);
+[fClusters, fIdx] = featureSelection(t_train, errorThreshold, varianceThreshold, [99]);
 
-% sainitize the train before handling it to the 
-%t_test_ = t_test;
-%train_(train_==99) = 0;
+% train-Feature-Reducted
+t_trainFRed = featureReduction(t_train, fClusters, [99]);
 
-% now, after the 
-K = size(clusters,1);
-[kmIdxTrain, kmCTrain] = kmeans(t_truth', K);
-kmCTrain = kmCTrain';
+% reduce the test set using the same cluster
+t_testFRed = featureReduction(t_test, fClusters, [99]);
 
-% after clustering the users using k-means and feature-selection
-% check their performance by measuring how the centers of the clusters
-% deviate form the features they represent deviated
+disp('Done Feature Reduction');
 
-% measure rmse for k-means
-rmse = zeros(1,N);
-for i=1:N
-    idx = kmIdxTrain(i);
-    rmse(i) = sqrt(mean((t_truth(:,i) - kmCTrain(:,idx)).^2));
-end
-rmse_Kmean = mean(rmse);
+% how many reducted features we have
+nRed = length(fClusters);
 
-% measure rmse for featureClustering
-rmse = [];
-nClusters = size(clusters,1);
-for i=1:nClusters;
-    cluster = clusters{i,:};
-    for j=1:length(cluster)        
-        idx = cluster(j);
-        rmse = [rmse sqrt(mean((t_truth(:,idx) - t_truthReducted(:,i)).^2))];
-    end    
-end
-rmse_featSelect = mean(rmse);
+% how many patterns of bservations we want to have
+[M, ~] = size(t_train);
+K = int16(M/10);
 
+% sanitize the train before passing it to k-means
+% this is to hide the 99, 55
+% train-feature-reducted-and-sanitized
+t_trainFRedSa = t_trainFRed;
+t_trainFRedSa(t_trainFRedSa==99) = 0.00099;
+
+% cluster the users to K cluster, don't use k-means
+% as it will take forever
+%[t_trainKmIdx, t_trainKmCenters] = kmeans(t_trainFRedSa, K);
+%t_trainKmCenters = t_trainKmCenters';
+[uClusters, uIdx] = featureSelection(t_train', errorThreshold, varianceThreshold, [99]);
+
+disp('Done User Clustering');
+return;
+
+% restore the 99
+t_trainKmCenters(t_trainKmCenters==0.00099) = 99;
+
+% after clustering the users into patterns of users
+% match each user in the training set with the pattern
+% then predict the missing values
+estmTest =  observPrediction(t_trainKmCenters, t_testFRed, [99], [99]);
+
+disp('Done Predicting the missing');
+
+% after matching and prediction
+% recover the test data and see the error against the truth
+estmTestRecov = dataRecovery(estmTest, fClusters,N);
+
+% get the errors
+[confusionEstm, rmseEstm, ameEstm] = calcError(t_truth, t_test, estmTestRecov, [99]);
+disp(rmseEstm);
 
 
 
