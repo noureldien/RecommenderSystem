@@ -5,9 +5,9 @@
 
 clc;
 
-addpath(genpath('..\cvx\'));
-addpath(genpath('..\TFOCS\'));
-addpath(genpath('..\Shared\'));
+addpath(genpath('cvx\'));
+addpath(genpath('TFOCS\'));
+addpath(genpath('Shared\'));
 
 % load the data
 load('Data\train.mat');
@@ -34,17 +34,17 @@ observations = test(omega);
 
 % smoothing parameter
 mu = 0.0001;
-epsilon = 0.001;
+epsilon = 0.0001;
 
 % The solver runs in seconds
-% tic
-% estm = solver_sNuclearBP( {M,N,omega}, observations, mu );
-% toc
-
-% or we could use relaxted parameter for faster solution
 tic
-estm = solver_sNuclearBPDN( {M,N,omega}, observations, epsilon, mu );
+estm = solver_sNuclearBP( {M,N,omega}, observations, mu );
 toc
+
+% % or we could use relaxted parameter for faster solution
+% tic
+% estm = solver_sNuclearBPDN( {M,N,omega}, observations, epsilon, mu );
+% toc
 
 % save the results
 saveResult(test, estm, 17);

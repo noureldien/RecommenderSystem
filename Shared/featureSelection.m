@@ -1,4 +1,4 @@
-function [ clusters ] = featureSelection( data, errorThreshold, varThreshold, missings )
+function [ clusters, indeces ] = featureSelection( data, errorThreshold, varThreshold, missings )
 
 % group features into clusters, each cluster has a group
 % of similar features, where the rmse between any pair of features
@@ -17,18 +17,37 @@ K = length(missings);
 [M,N] = size(data);
 
 % replace missings with zero
-for j=1:K
-    data(data == missings(j)) = 0;
-end
+% for j=1:K
+%     data(data == missings(j)) = 0;
+% end
 
 % get matrix that represent the pair-wise rmse
 % between the features
 errors = zeros(N,N);
 for i=1:N
     for j=i:N
-        f1 = data(:,i);
-        f2 = data(:,j);
-        error = sqrt(mean((f1-f2).^2));
+        if (i==j)
+            error = 0;
+        else            
+            % check if no missing data, then get all observations
+            % of the features. if missing data, get only
+            % the common observations with no missing data
+            if (K == 0)
+                f1 = data(:,i);
+                f2 = data(:,j);
+            else
+                idx1 = [];
+                idx2 = [];
+                for k=1:K
+                    idx1 = [idx1; find(data(:,i) ~= missings(k))];
+                    idx2 = [idx2; find(data(:,j) ~= missings(k))];
+                end
+                idx = intersect(idx1, idx2);
+                f1 = data(idx,i);
+                f2 = data(idx,j);
+            end
+            error = sqrt(mean((f1-f2).^2));
+        end        
         errors(i,j) = error;
         errors(j,i) = error;
     end
@@ -46,6 +65,9 @@ vars = dataVariances(data, [55 99]);
 % the index of correlated features
 clusters = {};
 
+% also save your choices in a matrix
+indeces = [];
+
 % loop on the coeffs of the features
 for i=1:N
     
@@ -60,7 +82,7 @@ for i=1:N
             % the id of the feature in the current cluster
             clusteredFeatureID = clusters{j,k};
             
-             % check the error between the current feature
+            % check the error between the current feature
             % and the clustered feature is below threshold
             isCorrelated = errors(clusteredFeatureID,i) <= errorThreshold;
             
@@ -83,12 +105,14 @@ for i=1:N
     % then add the feature to the cluster
     if (isCorrelated)
         clusters{j,:} = [clusters{j,:} i];
+        indeces = [indeces; [i, j]];
     else
         % if no correlation is found, then check if
         % the feature is noisy or not, by checking it's variance
         % if it is noisy, then add it in a new cluster
         if (vars(i) <= varThreshold)
             clusters = [clusters; i];
+            indeces = [indeces; [i, size(clusters,1)]];
         end
     end
     
