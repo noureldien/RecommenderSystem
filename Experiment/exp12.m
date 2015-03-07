@@ -1,26 +1,21 @@
-% t_truth+test to predict 99 in test
+% train to predict 99 in the train
+% then use train along with train to predict 99, 55 in test
 % then use test to predict 55 in test
 
 clc;
 
 % load data
-load('Data\t_truth.mat');
+load('Data\train.mat');
 load('Data\test.mat');
 
-% estimate train + test
-estm = dataPrediction(t_truth, test, [99], [99 55]);
+% estimate the training
+estm =  dataCompletion(train, [99]);
+
+% then use the estimated training to estimate 99, 55 of test
+estm55 = dataPrediction(estm, test, [], [99 55]);
 
 % save the results
-saveResult(test, estm, 21);
-
-% one step is using the estimated test, place 55 in it
-% and estimate 55
-test55 = estm;
-test55(test==55) = 55;
-estm55 = dataCompletion(test55, [55]);
-
-% save the results
-saveResult(test, estm55, 22);
+saveResult(test, estm55, 27);
 
 disp('Done Saving Results');
 
