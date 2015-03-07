@@ -11,8 +11,8 @@ addpath(genpath('..\TFOCS\'));
 addpath(genpath('..\Shared\'));
 
 % load the data
-load('..\Data\fourk.mat');
-load('..\Data\fourk55.mat');
+load('Data\fourk.mat');
+load('Data\fourk55.mat');
 
 t_truth = fourk;
 t_test = fourk55;
@@ -30,29 +30,21 @@ omega = find(t_test ~= 99 & t_test ~= 55);
 observations = t_truth(omega);
 
 % smoothing parameter
-mu = 0.00001;
-epsilon = 0.01;
+mu = 0.0001;
 
-% The solver runs in seconds
-tic
+% predict the missing values
 t_estm = solver_sNuclearBP( {M,N,omega}, observations, mu );
-toc
-
-% or we could use relaxted parameter for faster solution
-%t_estm = solver_sNuclearBPDN( {M,N,omega}, observations, epsilon, mu );
-
-% random walk, if I just placed zero
-% (i.e the average number), what would happen
-t_rand = t_test;
-t_rand(t_rand == 99 | t_rand == 55) = 0;
 
 % get the errors
 idx = find(t_test == 55);
 rmse = abs(t_truth(idx) - t_estm(idx))';
 rmse = reshape(rmse,[size(rmse,1)*size(rmse,2),1]);
-ame = mean(rmse);
 rmse = sqrt(mean((rmse).^2));
 disp(rmse);
+
+% get the errors
+[~, rmseEstm, ~] = calcError(t_truth, t_test, t_estm, [55]);
+disp(rmseEstm);
 
 
 

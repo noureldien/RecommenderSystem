@@ -1,4 +1,4 @@
-function [ indeces ] = dimensionSelection( data, errorThreshold, varThreshold, missings )
+function [ indeces, clusterCount ] = dimensionSelection( data, errorThreshold, varThreshold, missings )
 
 % group features into clusters, each cluster has a group
 % of similar features, where the rmse between any pair of features
@@ -8,10 +8,11 @@ function [ indeces ] = dimensionSelection( data, errorThreshold, varThreshold, m
 %         data      : M*N, where M observations, N features
 %    errorThreshold : over this threshold, the 2 features are not considered correlated
 %      varThreshold : a feature with variance over it is considered noisy and not picked up in the cluster
+%          missings : the missing numbers in the given data
 %
 % output:
-%          clusters : list of clustered features
-
+%          indeces : which feature got assigned to which cluster
+%     clusterCount : number of clusters
 
 K = length(missings);
 [M,N] = size(data);

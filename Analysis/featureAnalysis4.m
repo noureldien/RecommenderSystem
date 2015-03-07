@@ -10,6 +10,11 @@
 clc;
 
 load('Data\t_truth.mat');
+load('Data\t_test.mat');
+
+t_truth = t_test;
+t_truth(t_truth == 99) = 0.00099;
+
 [M,N] = size(t_truth);
 
 % do feature reduction/selection
@@ -17,10 +22,9 @@ load('Data\t_truth.mat');
 % the features get eliminated by variance threshold
 varianceThreshold = 50;
 errorThreshold = 5.6;
-[clusters, indeces] = featureSelection(t_truth, errorThreshold, varianceThreshold, [99]);
-t_truthReducted = dataReduction(t_truth, clusters, []);
+[indeces, K] = dimensionSelection(t_truth, errorThreshold, varianceThreshold, []);
+t_truthReducted = dimensionReduction(t_truth, indeces, []);
 
-K = size(clusters,1);
 [kmIdxTrain, kmCTrain] = kmeans(t_truth', K);
 kmCTrain = kmCTrain';
 
@@ -38,12 +42,10 @@ rmse_Kmean = mean(rmse);
 
 % measure rmse for featureClustering
 rmse = [];
-nClusters = size(clusters,1);
-for i=1:nClusters;
-    cluster = clusters{i,:};
-    for j=1:length(cluster)        
-        idx = cluster(j);
-        rmse = [rmse sqrt(mean((t_truth(:,idx) - t_truthReducted(:,i)).^2))];
+for i=1:K
+    idx = find(indeces==i);
+    for j=1:length(idx)
+        rmse = [rmse sqrt(mean((t_truth(:,idx(j)) - t_truthReducted(:,i)).^2))];
     end    
 end
 rmse_featSelect = mean(rmse);

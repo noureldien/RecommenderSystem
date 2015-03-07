@@ -48,15 +48,15 @@ clc;
 % % and save this to new matrix t_test
 % 
 % [N, M] = size(t_truth);
-% t_test = zeros(N, M);
 % 
 % missingValue = 99;
 % missingRatio = 40/100;
 % missingRatio = missingRatio * M;
+%
+%t_test = t_truth;
 % 
 % for i=1:N
 %     idx = randperm(M, missingRatio);
-%     t_test(i,:) = t_truth(i,:);
 %     t_test(i,idx) = missingValue;
 % end
 % 
@@ -64,6 +64,34 @@ clc;
 % save('Data\t_test.mat', 't_test');
 % 
 % disp('Finish Step Two');
+
+%% step three
+
+% % load the t_test
+% load('Data\t_test.mat');
+% 
+% % from the t_test, generate the t_test55 by
+% % removing 3 non-99 values from the matrix
+% % and save this to new matrix t_test55
+% 
+% [N, M] = size(t_test);
+% 
+% avoidedValued = 99;
+% missingValue = 55;
+% missingRatio = 3;
+% 
+% t_test55 = t_test;
+% 
+% for i=1:N
+%     idx = find(t_test(i,:)~=99);
+%     idx = randperm(length(idx), missingRatio);
+%     t_test55(i,idx) = missingValue;
+% end
+% 
+% % save the data
+% save('Data\t_test.mat55', 't_test55');
+% 
+% disp('Finish Step Three');
 
 
 
