@@ -1,4 +1,10 @@
-% save the results
-saveResult(test, estmTest55, 20);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% place where you test cool stuff
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-disp('Done Saving Results');
+saveResult(test, estm, 40);
+
+
+
+
+
