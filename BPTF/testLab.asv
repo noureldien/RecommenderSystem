@@ -1,0 +1,8 @@
+% testing cool stuff
+
+[M,N] = size(test);
+vals = Y_bpmf.vals;
+estm = reshape(vals,[M, N]);
+offset = 
+estm = 
+saveResult(test, estm, 48);

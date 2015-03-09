@@ -4,7 +4,7 @@
 % We hope it is helpful but do not privide any warranty.
 % If you encountered any problems please contact the author.
 
-function [Us Vs rmseTe] = BPMF(CTr, CTe, D, alpha, hyper_params, init, options)
+function [Us, Vs, rmseTe] = BPMF(CTr, CTe, D, alpha, hyper_params, init, options)
 %[Us Vs] = BPMF(CTr, CTe, D, alpha, hyper_params, init,
 %max_iter, n_sample, run_name)
 % bayesian probabilistic matrix factorization
