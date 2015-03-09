@@ -31,7 +31,7 @@ train_data=[i j v];
 b = Aop(train(:),1);
 
  for iteration=1:iter
-         
+     iteration
      Bu=repmat(bu,1,s_x(2));
      Bi=repmat(bi,s_x(1),1); 
      bbcs=Bu+Bi+gm;

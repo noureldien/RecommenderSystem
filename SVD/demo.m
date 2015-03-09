@@ -8,14 +8,29 @@
 % min_X ||y-A(x)||_2 + lambda_n[trace{(X'*X)_0.5}]
 
 clc;
-clear all;
-close all;
+%clear all;
+%close all;
 
 %load test and train datasets
-load data.mat;
-train=m22;
-testset = m2;
-gm = g_mean2; 
+%load data.mat;
+%train=m22;
+%testset = m2;
+%g_mean2 = 3.5265;
+
+% load our data
+train = averageCompletion(t_test,[99]);
+testset = t_truth;
+
+M = 500;
+N = 20;
+train = train(1:M,:);
+train = train(:,1:N);
+testset = testset(1:M,:);
+testset = testset(:,1:N);
+
+
+g_mean2 = mean2(train);
+gm = g_mean2;
 IDX = find(train);
 sizeX=size(train);
 
@@ -24,24 +39,23 @@ global Aop
 Aop = opRestriction(prod(sizeX), IDX);
 
 % Set paramteres
-max_iter=100;
+max_iter=10;
 lambda_n=1e1; 
 lambda_b = 1e-3;
 
 % call function
 [X , bi,  bu]= trace_form_nobreg(train,gm,Aop,sizeX,lambda_n,max_iter,lambda_b);
 
-  for r=1:size(X,1)             
-      x_recovered(r,:)=X(r,:)+bu(r,:)+bi+gm;       
-  end
+for r=1:size(X,1)
+    x_recovered(r,:)=X(r,:)+bu(r,:)+bi+gm;
+end
 
-%Compute Error in terms of MAE (mean absolute error)     
-mae = error_rate(testset,x_recovered)
+x_recovered_ = real(x_recovered);
 
+%Compute Error in terms of MAE (mean absolute error)
+mae = error_rate(testset,x_recovered_)
+rmse = sqrt(mean2((x_recovered_-testset).^2))
 
-
-nR = x_recovered;
-T = testset;
 
 % % check against truth
 % %nR vs. t_truth
