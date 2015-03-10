@@ -93,6 +93,36 @@ clc;
 % 
 % disp('Finish Step Three');
 
+%% step four
+% get t_trainKnn and t_testKnn from traintestKnn
+
+% load('Data\train.mat');
+% load('Data\traintestKnn.mat');
+% 
+% %first, get the trainKnn
+% trainKnn = traintestKnn(1:size(train,1),:);
+% 
+% %for each row in the train, if this row does not have empty
+% %then with this index, fill the t_trainKnn
+% t_trainKnn = [];
+% t_testKnn = [];
+% for i=1:size(trainKnn,1)
+%     i
+%     idx = find(train(i,:)==99);
+%     if (isempty(idx))
+%         t_testKnn = [t_testKnn; trainKnn(i,:)];
+%     else
+%         t_trainKnn = [t_trainKnn; trainKnn(i,:)];        
+%     end 
+% end
+% 
+% % save the data
+% save('Data\t_testKnn.mat', 't_testKnn');
+% save('Data\t_trainKnn.mat', 't_trainKnn');
+
+
+
+
 
 
 
