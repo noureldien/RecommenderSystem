@@ -8,7 +8,7 @@
 % the 55 of this test user using the those correlated 10
 % got rmse = 4.3433, even worse than the best result 4.3423
 % when changing 10 to 5 train users per cluster, we got 3.35
-% when predicting 99 + 55 from test instead of only 55, we got 3.35
+% when predicting 99 + 55 from test instead of only 55, we got 4.35
 
 clc;
 
