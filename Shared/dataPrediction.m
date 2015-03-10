@@ -1,4 +1,4 @@
-function [ estm ] = dataPrediction( train, test, trainMissings, testMissings )
+function [ estm ] = dataPrediction( train, test, trainMissings, testMissings, mu )
 
 % given the matrix that contains the user patterns
 % and another matrix that contains the users of the test set
@@ -12,6 +12,7 @@ function [ estm ] = dataPrediction( train, test, trainMissings, testMissings )
 %                      it is important to know so as to avaid these numbers when
 %                      doing matching between the test and it's pattern
 %       testMissings : the missing numbers in the test we want to predict
+%                 mu : smoothening rate
 % OUTPUT:
 %               estm : the test matrix but with the estimated missing values
 
@@ -42,7 +43,9 @@ end
 observations = data(omega);
 
 % smoothing parameter
-mu = 0.0001;
+if (nargin < 5)
+    mu = 0.0001;
+end
 
 % do the estimation
 estm = solver_sNuclearBP( {M,N,omega}, observations, mu );

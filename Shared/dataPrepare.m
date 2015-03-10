@@ -120,6 +120,37 @@ clc;
 % save('Data\t_testKnn.mat', 't_testKnn');
 % save('Data\t_trainKnn.mat', 't_trainKnn');
 
+%disp('Finish Step Four');
+
+% %% step five
+% 
+% % add three missing data (77) for each user
+% % in the test data, this is the only way we can create
+% % a ground truth for the actual test set
+% 
+% % load data
+% load('Data\test.mat');
+% % 
+% % from the test, generate the test77 by
+% % removing 3 non-99-non-55 values from the matrix
+% % and save this to new matrix test77
+% 
+% [N, M] = size(test);
+% 
+% missingCount = 3;
+% test77 = test;
+% 
+% for i=1:N
+%     idx = find(test(i,:)~=99 & test(i,:)~=55);
+%     idx = randperm(length(idx), missingCount);
+%     test77(i,idx) = 77;
+% end
+%  
+% % save the data
+% save('Data\test77.mat', 'test77');
+%  
+% disp('Finish Step Five');
+
 
 
 

@@ -1,9 +1,17 @@
 % like experiment 26 except using
 % t_trainKnn+t_testAvg instead of t_trainAverage
 % using train filled by Knn instrad of average is better
-% rmse = 4.3407
+% rmse = 4.3407 (Knn is slightly better than averaging)
+
 % now, investigate readjusting the prediction by doing
 % local estimates (i.e. doing estimates on 1 test + correlated train ones).
+% we estimate the 55, 99 of test indiviually
+% rmse = 4.3441
+
+%like the previous step, but estimating only 55 instead of 55, 99
+% rmse = 4.3414
+
+% from current exp (27) and previous one (26), local estimates fail
 
 clc;
 
@@ -54,14 +62,14 @@ for i=1:size(estm,1)
     if (uCount > 10)
         testCorr = [testCorr, i];
         uTrain = train99(uIdx,:);
-        estmAdj(i,:) = dataPrediction(uTrain, t_test55(i,:),[], [55 99]);
+        estmAdj(i,:) = dataPrediction(uTrain, test99(i,:),[], [55]);
     end
 end
 
 [~, rmse, ~] = calcError(t_truth, t_test55, estm,[55 99]);
 rmse
 
-[~, rmseAdj, ~] = calcError(t_truth, t_test55, estmAdj,[55 99]);
+[~, rmseAdj, ~] = calcError(t_truth, test99, estmAdj,[55]);
 rmseAdj
 
 

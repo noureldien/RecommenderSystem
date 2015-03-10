@@ -11,7 +11,7 @@ avgOffsets = eye(1,nbUsers);
 varMovies = eye(1,nbMovies);
 varOffsets = eye(1,nbUsers);
 
-m(m==55 | m==99) = NaN;
+m(m>10 | m<-10) = NaN;
 
 %Calculate the average rating per movie and its variance
 for j=1:nbMovies
